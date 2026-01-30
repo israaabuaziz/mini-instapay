@@ -1,0 +1,49 @@
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    image: project/frontend:staging 
+    ports:
+      - "3001:80"
+    env_file:
+      - .env
+      - .env.staging
+    depends_on:
+      - user-service
+      - transaction-service
+      - report-service
+
+  user-service:
+    build:
+      context: ./backend/user-service
+      dockerfile: Dockerfile
+    image: project/user-service:staging
+    ports:
+      - "6071:80"
+    env_file:
+      - .env
+      - .env.staging
+
+  transaction-service:
+    build:
+      context: ./backend/transaction-service
+      dockerfile: Dockerfile
+    image: project/transaction-service:staging 
+    ports:
+      - "6249:80"
+    env_file:
+      - .env
+      - .env.staging
+
+  report-service:
+    build:
+      context: ./backend/report-service
+      dockerfile: Dockerfile
+    image: project/report-service:staging
+    ports:
+      - "6158:80"
+    env_file:
+      - .env
+      - .env.staging

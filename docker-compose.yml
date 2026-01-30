@@ -1,0 +1,40 @@
+networks:
+  project_network:
+    driver: bridge
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: project/frontend
+    depends_on:
+      - user-service
+      - transaction-service
+      - report-service
+    networks:
+      - project_network
+
+  user-service:
+    build:
+      context: ./backend/user-service
+      dockerfile: Dockerfile
+    image: project/user-service
+    networks:
+      - project_network
+
+  transaction-service:
+    build:
+      context: ./backend/transaction-service
+      dockerfile: Dockerfile
+    image: project/transaction-service
+    networks:
+      - project_network
+
+  report-service:
+    build:
+      context: ./backend/report-service
+      dockerfile: Dockerfile
+    image: project/report-service
+    networks:
+      - project_network

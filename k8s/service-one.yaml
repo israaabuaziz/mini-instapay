@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-one
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: service-one
+  template:
+    metadata:
+      labels:
+        app: service-one
+    spec:
+      containers:
+      - name: service-one
+        image: israahassan1/service-one:latest 
+        ports:
+        - containerPort: 80 
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ASPNETCORE_URLS
+          value: "http://+:80"
+        - name: SERVICE1_DB
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: SERVICE1_DB
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-one
+spec:
+  selector:
+    app: service-one
+  ports:
+  - protocol: TCP
+    port: 80       
+    targetPort: 80 
+  type: ClusterIP   

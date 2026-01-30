@@ -1,0 +1,74 @@
+
+networks:
+  project_network:
+    driver: bridge
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: project/frontend:dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file:
+      - .env
+      - .env.dev
+    environment:
+      - VITE_API_SERVICE_ONE_URL=http://user-service:5000/api
+      - VITE_API_SERVICE_TWO_URL=http://transaction-service:5000/api
+      - VITE_API_SERVICE_THREE_URL=http://report-service:5000/api
+    depends_on:
+      - user-service
+      - transaction-service
+      - report-service
+    networks:
+      - project_network
+
+  user-service:
+    build:
+      context: ./backend/user-service
+      dockerfile: Dockerfile
+    image: project/user-service:dev
+    ports:
+      - "5071:5000"
+    volumes:
+      - ./backend/user-service:/app
+    env_file:
+      - .env
+      - .env.dev
+    networks:
+      - project_network
+
+  transaction-service:
+    build:
+      context: ./backend/transaction-service
+      dockerfile: Dockerfile
+    image: project/transaction-service:dev
+    ports:
+      - "5249:5000"
+    volumes:
+      - ./backend/transaction-service:/app
+    env_file:
+      - .env
+      - .env.dev
+    networks:
+      - project_network
+
+  report-service:
+    build:
+      context: ./backend/report-service
+      dockerfile: Dockerfile
+    image: project/report-service:dev
+    ports:
+      - "5158:5000"
+    volumes:
+      - ./backend/report-service:/app
+    env_file:
+      - .env
+      - .env.dev
+    networks:
+      - project_network

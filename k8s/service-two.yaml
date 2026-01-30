@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-two
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: service-two
+  template:
+    metadata:
+      labels:
+        app: service-two
+    spec:
+      containers:
+      - name: service-two
+        image: israahassan1/service-two:latest 
+        ports:
+        - containerPort: 80 
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ASPNETCORE_URLS
+          value: "http://+:80"
+        - name: SERVICE2_DB
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: SERVICE2_DB
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-two
+spec:
+  selector:
+    app: service-two
+  ports:
+  - protocol: TCP
+    port: 80       
+    targetPort: 80 
+  type: ClusterIP   

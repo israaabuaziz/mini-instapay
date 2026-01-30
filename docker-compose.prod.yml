@@ -1,0 +1,44 @@
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod 
+    image: project/frontend:prod 
+    ports:
+      - "80:80"
+    env_file:
+      - .env
+      - .env.prod
+    depends_on:
+      - user-service
+      - transaction-service
+      - report-service
+
+  user-service:
+    build:
+      context: ./backend/user-service
+      dockerfile: Dockerfile
+    image: project/user-service:prod 
+
+    env_file:
+      - .env
+      - .env.prod
+
+  transaction-service:
+    build:
+      context: ./backend/transaction-service
+      dockerfile: Dockerfile
+    image: project/transaction-service:prod 
+    env_file:
+      - .env
+      - .env.prod
+
+  report-service:
+    build:
+      context: ./backend/report-service
+      dockerfile: Dockerfile
+    image: project/report-service:prod 
+    env_file:
+      - .env
+      - .env.prod
